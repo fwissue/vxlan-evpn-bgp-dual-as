@@ -1,0 +1,1046 @@
+=======LINUX1======
+cisco@LINUX1:~$ ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 52:54:00:01:7F:6D  
+          inet addr:192.168.1.2  Bcast:192.168.1.255  Mask:255.255.255.0
+
+=======LINUX2======
+cisco@LINUX2:~$ ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 52:54:00:1F:7B:D8  
+          inet addr:192.168.1.4  Bcast:192.168.1.255  Mask:255.255.255.0
+
+======SP1===========
+SP1# show cdp nei
+Capability Codes: R - Router, T - Trans-Bridge, B - Source-Route-Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater,
+                  V - VoIP-Phone, D - Remotely-Managed-Device,
+                  s - Supports-STP-Dispute
+
+Device-ID          Local Intrfce  Hldtme Capability  Platform      Port ID
+LEAF1(9L6TT84BFFB)
+                    Eth1/1         144    R S s     N9K-C9300v    Eth1/1        
+LEAF2(9Z2DBK6GFK1)
+                    Eth1/2         152    R S s     N9K-C9300v    Eth1/1        
+
+Total entries displayed: 2
+SP1# show ip int brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  10.255.255.4    protocol-up/link-up/admin-up       
+Lo1                  10.1.1.4        protocol-up/link-up/admin-up       
+Eth1/1               10.10.10.2      protocol-up/link-up/admin-up       
+Eth1/2               10.10.10.10     protocol-up/link-up/admin-up       
+Eth1/3               10.10.10.18     protocol-up/link-up/admin-up       
+SP1# show ip ospf nei
+ OSPF Process ID 1 VRF default
+ Total number of neighbors: 2
+ Neighbor ID     Pri State            Up Time  Address         Interface
+ 10.255.255.1      1 FULL/ -          00:37:49 10.10.10.1      Eth1/1 
+ 10.255.255.2      1 FULL/ -          00:37:44 10.10.10.9      Eth1/2 
+SP1# show ip route
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+10.1.1.1/32, ubest/mbest: 1/0
+    *via 10.255.255.1, [20/0], 00:37:39, bgp-65000, external, tag 65001
+10.1.1.2/32, ubest/mbest: 1/0
+    *via 10.255.255.2, [20/0], 00:37:28, bgp-65000, external, tag 65001
+10.1.1.4/32, ubest/mbest: 2/0, attached
+    *via 10.1.1.4, Lo1, [0/0], 00:38:58, local, tag 12345
+    *via 10.1.1.4, Lo1, [0/0], 00:38:58, direct, tag 12345
+10.1.1.5/32, ubest/mbest: 2/0
+    *via 10.255.255.1, [20/0], 00:18:56, bgp-65000, external, tag 65001
+    *via 10.255.255.2, [20/0], 00:11:00, bgp-65000, external, tag 65001
+10.10.10.0/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.2, Eth1/1, [0/0], 00:39:03, direct
+10.10.10.2/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.2, Eth1/1, [0/0], 00:39:03, local
+10.10.10.4/30, ubest/mbest: 1/0
+    *via 10.10.10.1, Eth1/1, [110/80], 00:37:42, ospf-1, intra
+10.10.10.8/30, ubest/mbest: 1/0, attached
+
+...skipping 1 line
+10.10.10.10/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.10, Eth1/2, [0/0], 00:39:02, local
+10.10.10.12/30, ubest/mbest: 1/0
+    *via 10.10.10.9, Eth1/2, [110/80], 00:37:39, ospf-1, intra
+10.10.10.16/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.18, Eth1/3, [0/0], 00:39:02, direct
+10.10.10.18/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.18, Eth1/3, [0/0], 00:39:02, local
+10.10.10.20/30, ubest/mbest: 2/0
+    *via 10.10.10.1, Eth1/1, [110/120], 00:19:09, ospf-1, intra
+    *via 10.10.10.9, Eth1/2, [110/120], 00:19:07, ospf-1, intra
+10.255.255.1/32, ubest/mbest: 1/0
+    *via 10.10.10.1, Eth1/1, [110/41], 00:37:42, ospf-1, intra
+10.255.255.2/32, ubest/mbest: 1/0
+    *via 10.10.10.9, Eth1/2, [110/41], 00:37:39, ospf-1, intra
+10.255.255.4/32, ubest/mbest: 2/0, attached
+    *via 10.255.255.4, Lo0, [0/0], 00:38:58, local, tag 12345
+    *via 10.255.255.4, Lo0, [0/0], 00:38:58, direct, tag 12345
+10.255.255.5/32, ubest/mbest: 2/0
+    *via 10.255.255.1, [20/0], 00:18:56, bgp-65000, external, tag 65001
+    *via 10.255.255.2, [20/0], 00:11:00, bgp-65000, external, tag 65001
+
+SP1# show ip bgp all summ
+BGP summary information for VRF default, address family IPv4 Unicast
+BGP router identifier 10.255.255.4, local AS number 65000
+BGP table version is 15, IPv4 Unicast config peers 2, capable peers 2
+8 network entries and 10 paths using 2192 bytes of memory
+BGP attribute entries [3/516], BGP AS path entries [2/16]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.1    4 65001      51      46       15    0    0 00:37:58 4         
+10.255.255.2    4 65001      50      45       15    0    0 00:37:47 4         
+
+BGP summary information for VRF default, address family IPv6 Unicast
+
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 10.255.255.4, local AS number 65000
+BGP table version is 10, L2VPN EVPN config peers 2, capable peers 2
+6 network entries and 6 paths using 1464 bytes of memory
+BGP attribute entries [3/516], BGP AS path entries [1/6]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.1    4 65001      51      46       10    0    0 00:37:58 3         
+10.255.255.2    4 65001      50      45       10    0    0 00:37:47 3         
+SP1# 
+
+
+SP1# show bgp ipv4 unicast
+BGP routing table information for VRF default, address family IPv4 Unicast
+BGP table version is 15, Local Router ID is 10.255.255.4
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+*>e10.1.1.1/32        10.255.255.1             0                     0 65001 ?
+*>e10.1.1.2/32        10.255.255.2             0                     0 65001 ?
+*>r10.1.1.4/32        0.0.0.0                  0        100      32768 ?
+*|e10.1.1.5/32        10.255.255.2                                   0 65001 650
+00 ?
+*>e                   10.255.255.1                                   0 65001 650
+00 ?
+*>e10.255.255.1/32    10.255.255.1             0                     0 65001 ?
+*>e10.255.255.2/32    10.255.255.2             0                     0 65001 ?
+*>r10.255.255.4/32    0.0.0.0                  0        100      32768 ?
+*|e10.255.255.5/32    10.255.255.2                                   0 65001 650
+00 ?
+*>e                   10.255.255.1                                   0 65001 650
+00 ?
+
+SP1# show bgp l2vpn evpn
+BGP routing table information for VRF default, address family L2VPN EVPN
+BGP table version is 10, Local Router ID is 10.255.255.4
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+Route Distinguisher: 10.255.255.1:32777
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[0]:[0.0.0.0]/216
+                      10.1.1.1                                       0 65001 i
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]/248
+                      10.1.1.1                                       0 65001 i
+*>e[3]:[0]:[32]:[10.1.1.1]/88
+                      10.1.1.1                                       0 65001 i
+
+Route Distinguisher: 10.255.255.2:32777
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[0]:[0.0.0.0]/216
+                      10.1.1.2                                       0 65001 i
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]/248
+                      10.1.1.2                                       0 65001 i
+*>e[3]:[0]:[32]:[10.1.1.2]/88
+                      10.1.1.2                                       0 65001 i
+
+SP1# 
+
+
+=======SP2=============
+
+SP2# show cdp nei
+Capability Codes: R - Router, T - Trans-Bridge, B - Source-Route-Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater,
+                  V - VoIP-Phone, D - Remotely-Managed-Device,
+                  s - Supports-STP-Dispute
+
+Device-ID          Local Intrfce  Hldtme Capability  Platform      Port ID
+LEAF1(9L6TT84BFFB)
+                    Eth1/1         132    R S s     N9K-C9300v    Eth1/2        
+LEAF2(9Z2DBK6GFK1)
+                    Eth1/2         141    R S s     N9K-C9300v    Eth1/2        
+
+Total entries displayed: 2
+SP2# show ip int brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  10.255.255.5    protocol-up/link-up/admin-up       
+Lo1                  10.1.1.5        protocol-up/link-up/admin-up       
+Eth1/1               10.10.10.6      protocol-up/link-up/admin-up       
+Eth1/2               10.10.10.14     protocol-up/link-up/admin-up       
+Eth1/3               10.10.10.22     protocol-up/link-up/admin-up       
+SP2# show ip ospf nei
+ OSPF Process ID 1 VRF default
+ Total number of neighbors: 2
+ Neighbor ID     Pri State            Up Time  Address         Interface
+ 10.255.255.1      1 FULL/ -          00:22:27 10.10.10.5      Eth1/1 
+ 10.255.255.2      1 FULL/ -          00:22:19 10.10.10.13     Eth1/2 
+SP2# show ip route
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+10.1.1.1/32, ubest/mbest: 1/0
+    *via 10.255.255.1, [20/0], 00:14:09, bgp-65000, external, tag 65001
+10.1.1.2/32, ubest/mbest: 1/0
+    *via 10.255.255.2, [20/0], 00:14:09, bgp-65000, external, tag 65001
+10.1.1.4/32, ubest/mbest: 2/0
+    *via 10.255.255.1, [20/0], 00:14:09, bgp-65000, external, tag 65001
+    *via 10.255.255.2, [20/0], 00:14:09, bgp-65000, external, tag 65001
+10.1.1.5/32, ubest/mbest: 2/0, attached
+    *via 10.1.1.5, Lo1, [0/0], 00:23:22, local, tag 12345
+    *via 10.1.1.5, Lo1, [0/0], 00:23:22, direct, tag 12345
+10.10.10.0/30, ubest/mbest: 1/0
+    *via 10.10.10.5, Eth1/1, [110/80], 00:22:21, ospf-1, intra
+10.10.10.4/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.6, Eth1/1, [0/0], 00:23:25, direct
+10.10.10.6/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.6, Eth1/1, [0/0], 00:23:25, local
+10.10.10.8/30, ubest/mbest: 1/0
+    *via 10.10.10.13, Eth1/2, [110/80], 00:22:19, ospf-1, intra
+10.10.10.12/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.14, Eth1/2, [0/0], 00:23:25, direct
+10.10.10.14/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.14, Eth1/2, [0/0], 00:23:25, local
+10.10.10.16/30, ubest/mbest: 2/0
+    *via 10.10.10.5, Eth1/1, [110/120], 00:22:21, ospf-1, intra
+    *via 10.10.10.13, Eth1/2, [110/120], 00:22:19, ospf-1, intra
+10.10.10.20/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.22, Eth1/3, [0/0], 00:23:24, direct
+10.10.10.22/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.22, Eth1/3, [0/0], 00:23:24, local
+10.255.255.1/32, ubest/mbest: 1/0
+    *via 10.10.10.5, Eth1/1, [110/41], 00:22:21, ospf-1, intra
+10.255.255.2/32, ubest/mbest: 1/0
+    *via 10.10.10.13, Eth1/2, [110/41], 00:22:19, ospf-1, intra
+10.255.255.4/32, ubest/mbest: 2/0
+    *via 10.255.255.1, [20/0], 00:14:09, bgp-65000, external, tag 65001
+    *via 10.255.255.2, [20/0], 00:14:09, bgp-65000, external, tag 65001
+10.255.255.5/32, ubest/mbest: 2/0, attached
+    *via 10.255.255.5, Lo0, [0/0], 00:23:22, local, tag 12345
+    *via 10.255.255.5, Lo0, [0/0], 00:23:22, direct, tag 12345
+
+SP2# show ip bgp all summ
+BGP summary information for VRF default, address family IPv4 Unicast
+BGP router identifier 10.255.255.5, local AS number 65000
+BGP table version is 25, IPv4 Unicast config peers 2, capable peers 2
+8 network entries and 14 paths using 2672 bytes of memory
+BGP attribute entries [4/688], BGP AS path entries [3/30]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.1    4 65001      28      21       25    0    0 00:14:13 6         
+10.255.255.2    4 65001      30      25       25    0    0 00:14:13 6         
+
+BGP summary information for VRF default, address family IPv6 Unicast
+
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 10.255.255.5, local AS number 65000
+BGP table version is 19, L2VPN EVPN config peers 2, capable peers 2
+6 network entries and 6 paths using 1464 bytes of memory
+BGP attribute entries [3/516], BGP AS path entries [1/6]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.1    4 65001      28      21       19    0    0 00:14:13 3         
+10.255.255.2    4 65001      30      25       19    0    0 00:14:13 3         
+SP2# 
+
+
+
+SP2# show bgp ipv4 unicast
+BGP routing table information for VRF default, address family IPv4 Unicast
+BGP table version is 25, Local Router ID is 10.255.255.5
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-injected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - best2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+* e10.1.1.1/32        10.255.255.2                                   0 65001 65000 65001 ?
+*>e                   10.255.255.1             0                     0 65001 ?
+*>e10.1.1.2/32        10.255.255.2             0                     0 65001 ?
+* e                   10.255.255.1                                   0 65001 65000 65001 ?
+*|e10.1.1.4/32        10.255.255.2                                   0 65001 65000 ?
+*>e                   10.255.255.1                                   0 65001 65000 ?
+*>r10.1.1.5/32        0.0.0.0                  0        100      32768 ?
+* e10.255.255.1/32    10.255.255.2                                   0 65001 65000 65001 ?
+*>e                   10.255.255.1             0                     0 65001 ?
+*>e10.255.255.2/32    10.255.255.2             0                     0 65001 ?
+* e                   10.255.255.1                                   0 65001 65000 65001 ?
+*|e10.255.255.4/32    10.255.255.2                                   0 65001 65000 ?
+*>e                   10.255.255.1                                   0 65001 65000 ?
+*>r10.255.255.5/32    0.0.0.0                  0        100      32768 ?
+
+SP2# show bgp l2vpn evpn
+BGP routing table information for VRF default, address family L2VPN EVPN
+BGP table version is 19, Local Router ID is 10.255.255.5
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-injected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - best2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+Route Distinguisher: 10.255.255.1:32777
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[0]:[0.0.0.0]/216
+                      10.1.1.1                                       0 65001 i
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]/248
+                      10.1.1.1                                       0 65001 i
+*>e[3]:[0]:[32]:[10.1.1.1]/88
+                      10.1.1.1                                       0 65001 i
+
+Route Distinguisher: 10.255.255.2:32777
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[0]:[0.0.0.0]/216
+                      10.1.1.2                                       0 65001 i
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]/248
+                      10.1.1.2                                       0 65001 i
+*>e[3]:[0]:[32]:[10.1.1.2]/88
+                      10.1.1.2                                       0 65001 i
+
+SP2# 
+
+
+=======LEAF1========
+LEAF1# show cdp nei
+Capability Codes: R - Router, T - Trans-Bridge, B - Source-Route-Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater,
+                  V - VoIP-Phone, D - Remotely-Managed-Device,
+                  s - Supports-STP-Dispute
+
+Device-ID          Local Intrfce  Hldtme Capability  Platform      Port ID
+SP1(9UN41W6KX0D)    Eth1/1         160    R S s     N9K-C9500v    Eth1/1        
+SP2(9344ZSYDOJL)    Eth1/2         149    R S s     N9K-C9500v    Eth1/1        
+
+Total entries displayed: 2
+LEAF1#  show ip int brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  10.255.255.1    protocol-up/link-up/admin-up       
+Lo1                  10.1.1.1        protocol-up/link-up/admin-up       
+Eth1/1               10.10.10.1      protocol-up/link-up/admin-up       
+Eth1/2               10.10.10.5      protocol-up/link-up/admin-up       
+LEAF1#  show ip ospf nei
+ OSPF Process ID 1 VRF default
+ Total number of neighbors: 2
+ Neighbor ID     Pri State            Up Time  Address         Interface
+ 10.255.255.4      1 FULL/ -          00:42:07 10.10.10.2      Eth1/1 
+ 10.255.255.5      1 FULL/ -          00:23:34 10.10.10.6      Eth1/2 
+LEAF1#  show ip route
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+10.1.1.1/32, ubest/mbest: 2/0, attached
+    *via 10.1.1.1, Lo1, [0/0], 00:43:53, local, tag 12345
+    *via 10.1.1.1, Lo1, [0/0], 00:43:53, direct, tag 12345
+10.1.1.2/32, ubest/mbest: 2/0
+    *via 10.255.255.4, [20/0], 00:41:46, bgp-65001, external, tag 65000
+    *via 10.255.255.5, [20/0], 00:15:18, bgp-65001, external, tag 65000
+10.1.1.4/32, ubest/mbest: 1/0
+    *via 10.255.255.4, [20/0], 00:41:57, bgp-65001, external, tag 65000
+10.1.1.5/32, ubest/mbest: 1/0
+    *via 10.255.255.5, [20/0], 00:23:14, bgp-65001, external, tag 65000
+10.10.10.0/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.1, Eth1/1, [0/0], 00:43:56, direct
+10.10.10.1/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.1, Eth1/1, [0/0], 00:43:56, local
+10.10.10.4/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.5, Eth1/2, [0/0], 00:43:56, direct
+10.10.10.5/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.5, Eth1/2, [0/0], 00:43:56, local
+10.10.10.8/30, ubest/mbest: 1/0
+    *via 10.10.10.2, Eth1/1, [110/80], 00:42:02, ospf-1, intra
+10.10.10.12/30, ubest/mbest: 1/0
+    *via 10.10.10.6, Eth1/2, [110/80], 00:23:28, ospf-1, intra
+10.10.10.16/30, ubest/mbest: 1/0
+    *via 10.10.10.2, Eth1/1, [110/80], 00:42:02, ospf-1, intra
+10.10.10.20/30, ubest/mbest: 1/0
+    *via 10.10.10.6, Eth1/2, [110/80], 00:23:28, ospf-1, intra
+10.255.255.1/32, ubest/mbest: 2/0, attached
+    *via 10.255.255.1, Lo0, [0/0], 00:43:53, local, tag 12345
+    *via 10.255.255.1, Lo0, [0/0], 00:43:53, direct, tag 12345
+10.255.255.2/32, ubest/mbest: 2/0
+    *via 10.255.255.4, [20/0], 00:41:46, bgp-65001, external, tag 65000
+    *via 10.255.255.5, [20/0], 00:15:18, bgp-65001, external, tag 65000
+10.255.255.4/32, ubest/mbest: 1/0
+    *via 10.10.10.2, Eth1/1, [110/41], 00:42:02, ospf-1, intra
+10.255.255.5/32, ubest/mbest: 1/0
+    *via 10.10.10.6, Eth1/2, [110/41], 00:23:28, ospf-1, intra
+
+LEAF1# 
+
+LEAF1#  show nve peers
+Interface Peer-IP                                 State LearnType Uptime   Route
+r-Mac       
+--------- --------------------------------------  ----- --------- -------- -----
+------------
+nve1      10.1.1.2                                Up    CP        00:42:13 n/a  
+            
+
+LEAF1#  show mac address-table vlan 10
+Legend: 
+        * - primary entry, G - Gateway MAC, (R) - Routed MAC, O - Overlay MAC
+        age - seconds since last seen,+ - primary entry using vPC Peer-Link,
+        (T) - True, (F) - False, C - ControlPlane MAC, ~ - vsan
+   VLAN     MAC Address      Type      age     Secure NTFY Ports
+---------+-----------------+--------+---------+------+----+------------------
+*   10     5254.0001.7f6d   dynamic  0         F      F    Eth1/3
+C   10     5254.001f.7bd8   dynamic  0         F      F    nve1(10.1.1.2)
+LEAF1#  show nve vni 1000
+Codes: CP - Control Plane        DP - Data Plane          
+       UC - Unconfigured         SA - Suppress ARP        
+       SU - Suppress Unknown Unicast 
+       Xconn - Crossconnect      
+       MS-IR - Multisite Ingress Replication
+ 
+Interface VNI      Multicast-group   State Mode Type [BD/VRF]      Flags
+--------- -------- ----------------- ----- ---- ------------------ -----
+nve1      1000     UnicastBGP        Up    CP   L2 [10]            SA   
+
+LEAF1#  show ip bgp all summ
+BGP summary information for VRF default, address family IPv4 Unicast
+BGP router identifier 10.255.255.1, local AS number 65001
+BGP table version is 16, IPv4 Unicast config peers 2, capable peers 2
+8 network entries and 10 paths using 2192 bytes of memory
+BGP attribute entries [3/516], BGP AS path entries [2/16]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.4    4 65000      55      49       16    0    0 00:42:25 4         
+10.255.255.5    4 65000      43      40       16    0    0 00:15:46 4         
+
+BGP summary information for VRF default, address family IPv6 Unicast
+
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 10.255.255.1, local AS number 65001
+BGP table version is 23, L2VPN EVPN config peers 2, capable peers 2
+9 network entries and 12 paths using 2196 bytes of memory
+BGP attribute entries [5/860], BGP AS path entries [1/10]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.4    4 65000      55      49       23    0    0 00:42:25 3         
+10.255.255.5    4 65000      43      40       23    0    0 00:15:46 3         
+LEAF1#  show bgp l2vpn evpn 192.168.1.4
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777    (L2VNI 1000)
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]
+/248, version 23
+Paths: (1 available, best #1)
+Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop, in rib
+             Imported from 10.255.255.2:32777:[2]:[0]:[0]:[48]:[5254.001f.7bd8]:
+[32]:[192.168.1.4]/248 
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 not advertised to any peer
+
+Route Distinguisher: 10.255.255.2:32777
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]
+/248, version 20
+Paths: (2 available, best #2)
+Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not i
+n HW
+
+  Path type: external, path is valid, not best reason: newer EBGP path, no label
+ed nexthop
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.5 (10.255.255.5)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported to 1 destination(s)
+             Imported paths list: L2-1000
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 advertised to peers:
+    10.255.255.5   
+
+LEAF1# show bgp l2vpn evpn 192.168.1.2
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777    (L2VNI 1000)
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]
+/248, version 10
+Paths: (1 available, best #1)
+Flags: (0x000102) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop
+  AS-Path: NONE, path locally originated
+    10.1.1.1 (metric 0) from 0.0.0.0 (10.255.255.1)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 advertised to peers:
+    10.255.255.4       10.255.255.5   
+
+LEAF1# 
+
+LEAF1#  show bgp l2vpn evpn 10.1.1.1
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777    (L2VNI 1000)
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.1]/88, version 3
+Paths: (1 available, best #1)
+Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop
+  AS-Path: NONE, path locally originated
+    10.1.1.1 (metric 0) from 0.0.0.0 (10.255.255.1)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.1
+
+  Path-id 1 advertised to peers:
+    10.255.255.4       10.255.255.5   
+
+LEAF1#  show bgp l2vpn evpn 10.1.1.2
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777    (L2VNI 1000)
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.2]/88, version 21
+Paths: (1 available, best #1)
+Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported from 10.255.255.2:32777:[3]:[0]:[32]:[10.1.1.2]/88 
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.2
+
+  Path-id 1 not advertised to any peer
+
+Route Distinguisher: 10.255.255.2:32777
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.2]/88, version 18
+Paths: (2 available, best #2)
+Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not i
+n HW
+
+  Path type: external, path is valid, not best reason: newer EBGP path, no label
+ed nexthop
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.5 (10.255.255.5)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.2
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported to 1 destination(s)
+             Imported paths list: L2-1000
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.2 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.2
+
+  Path-id 1 advertised to peers:
+    10.255.255.5   
+
+LEAF1# 
+
+LEAF1#  show l2route evpn mac-ip all
+Flags -(Rmac):Router MAC (Stt):Static (L):Local (R):Remote (V):vPC link 
+(Dup):Duplicate (Spl):Split (Rcv):Recv(D):Del Pending (S):Stale (C):Clear
+(Ps):Peer Sync (Ro):Re-Originated (Orp):Orphan 
+Topology    Mac Address    Host IP                                 Prod   Flags 
+        Seq No     Next-Hops                              
+----------- -------------- --------------------------------------- ------ ------
+---- ---------- ---------------------------------------
+10          5254.0001.7f6d 192.168.1.2                             ARP    L,    
+        0         Eth1/3                                 
+10          5254.001f.7bd8 192.168.1.4                             BGP    --    
+        0         10.1.1.2 (Label: 1000)                 
+LEAF1#  show ip bgp all
+BGP routing table information for VRF default, address family IPv4 Unicast
+BGP table version is 16, Local Router ID is 10.255.255.1
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+*>r10.1.1.1/32        0.0.0.0                  0        100      32768 ?
+*|e10.1.1.2/32        10.255.255.5                                   0 65000 650
+01 ?
+*>e                   10.255.255.4                                   0 65000 650
+01 ?
+*>e10.1.1.4/32        10.255.255.4             0                     0 65000 ?
+*>e10.1.1.5/32        10.255.255.5             0                     0 65000 ?
+*>r10.255.255.1/32    0.0.0.0                  0        100      32768 ?
+*|e10.255.255.2/32    10.255.255.5                                   0 65000 650
+01 ?
+*>e                   10.255.255.4                                   0 65000 650
+01 ?
+*>e10.255.255.4/32    10.255.255.4             0                     0 65000 ?
+*>e10.255.255.5/32    10.255.255.5             0                     0 65000 ?
+
+BGP routing table information for VRF default, address family L2VPN EVPN
+BGP table version is 23, Local Router ID is 10.255.255.1
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+Route Distinguisher: 10.255.255.1:32777    (L2VNI 1000)
+*>l[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[0]:[0.0.0.0]/216
+                      10.1.1.1                          100      32768 i
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[0]:[0.0.0.0]/216
+                      10.1.1.2                                       0 65000 650
+01 i
+*>l[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]/248
+                      10.1.1.1                          100      32768 i
+*>e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]/248
+                      10.1.1.2                                       0 65000 650
+01 i
+*>l[3]:[0]:[32]:[10.1.1.1]/88
+                      10.1.1.1                          100      32768 i
+
+...skipping 1 line
+                      10.1.1.2                                       0 65000 650
+01 i
+
+Route Distinguisher: 10.255.255.2:32777
+* e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[0]:[0.0.0.0]/216
+                      10.1.1.2                                       0 65000 650
+01 i
+*>e                   10.1.1.2                                       0 65000 650
+01 i
+* e[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]/248
+                      10.1.1.2                                       0 65000 650
+01 i
+*>e                   10.1.1.2                                       0 65000 650
+01 i
+* e[3]:[0]:[32]:[10.1.1.2]/88
+                      10.1.1.2                                       0 65000 650
+01 i
+*>e                   10.1.1.2                                       0 65000 650
+01 i
+
+LEAF1# show nve internal vni all
+
+VNI        Ready-state  Reason                                 Multisite   
+---------- ------------ -------------------------------------  ------------
+1000       Ready        [L2-vni-rep-mode-ready              ]  No         
+
+LEAF1# 
+
+====LEAF2=======
+LEAF2# show cdp nei
+Capability Codes: R - Router, T - Trans-Bridge, B - Source-Route-Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater,
+                  V - VoIP-Phone, D - Remotely-Managed-Device,
+                  s - Supports-STP-Dispute
+
+Device-ID          Local Intrfce  Hldtme Capability  Platform      Port ID
+SP1(9UN41W6KX0D)    Eth1/1         125    R S s     N9K-C9500v    Eth1/2        
+SP2(9344ZSYDOJL)    Eth1/2         174    R S s     N9K-C9500v    Eth1/2        
+
+Total entries displayed: 2
+LEAF2#  show ip int brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  10.255.255.2    protocol-up/link-up/admin-up       
+Lo1                  10.1.1.2        protocol-up/link-up/admin-up       
+Eth1/1               10.10.10.9      protocol-up/link-up/admin-up       
+Eth1/2               10.10.10.13     protocol-up/link-up/admin-up       
+LEAF2#  show ip ospf nei
+ OSPF Process ID 1 VRF default
+ Total number of neighbors: 2
+ Neighbor ID     Pri State            Up Time  Address         Interface
+ 10.255.255.4      1 FULL/ -          00:45:39 10.10.10.10     Eth1/1 
+ 10.255.255.5      1 FULL/ -          00:27:02 10.10.10.14     Eth1/2 
+LEAF2#  show ip route
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+10.1.1.1/32, ubest/mbest: 2/0
+    *via 10.255.255.4, [20/0], 00:18:54, bgp-65001, external, tag 65000
+    *via 10.255.255.5, [20/0], 00:18:54, bgp-65001, external, tag 65000
+10.1.1.2/32, ubest/mbest: 2/0, attached
+    *via 10.1.1.2, Lo1, [0/0], 00:47:20, local, tag 12345
+    *via 10.1.1.2, Lo1, [0/0], 00:47:20, direct, tag 12345
+10.1.1.4/32, ubest/mbest: 1/0
+    *via 10.255.255.4, [20/0], 00:18:54, bgp-65001, external, tag 65000
+10.1.1.5/32, ubest/mbest: 1/0
+    *via 10.255.255.5, [20/0], 00:18:54, bgp-65001, external, tag 65000
+10.10.10.0/30, ubest/mbest: 1/0
+    *via 10.10.10.10, Eth1/1, [110/80], 00:45:33, ospf-1, intra
+10.10.10.4/30, ubest/mbest: 1/0
+    *via 10.10.10.14, Eth1/2, [110/80], 00:27:02, ospf-1, intra
+10.10.10.8/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.9, Eth1/1, [0/0], 00:47:24, direct
+10.10.10.9/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.9, Eth1/1, [0/0], 00:47:24, local
+10.10.10.12/30, ubest/mbest: 1/0, attached
+    *via 10.10.10.13, Eth1/2, [0/0], 00:47:23, direct
+10.10.10.13/32, ubest/mbest: 1/0, attached
+    *via 10.10.10.13, Eth1/2, [0/0], 00:47:23, local
+10.10.10.16/30, ubest/mbest: 1/0
+    *via 10.10.10.10, Eth1/1, [110/80], 00:45:33, ospf-1, intra
+10.10.10.20/30, ubest/mbest: 1/0
+    *via 10.10.10.14, Eth1/2, [110/80], 00:27:02, ospf-1, intra
+10.255.255.1/32, ubest/mbest: 2/0
+    *via 10.255.255.4, [20/0], 00:18:54, bgp-65001, external, tag 65000
+    *via 10.255.255.5, [20/0], 00:18:54, bgp-65001, external, tag 65000
+10.255.255.2/32, ubest/mbest: 2/0, attached
+    *via 10.255.255.2, Lo0, [0/0], 00:47:20, local, tag 12345
+    *via 10.255.255.2, Lo0, [0/0], 00:47:20, direct, tag 12345
+10.255.255.4/32, ubest/mbest: 1/0
+    *via 10.10.10.10, Eth1/1, [110/41], 00:45:33, ospf-1, intra
+10.255.255.5/32, ubest/mbest: 1/0
+    *via 10.10.10.14, Eth1/2, [110/41], 00:27:02, ospf-1, intra
+
+LEAF2# 
+
+LEAF2#  show nve peers
+Interface Peer-IP                                 State LearnType Uptime   Route
+r-Mac       
+--------- --------------------------------------  ----- --------- -------- -----
+------------
+nve1      10.1.1.1                                Up    CP        00:45:45 n/a  
+            
+
+LEAF2#  show mac address-table vlan 10
+Legend: 
+        * - primary entry, G - Gateway MAC, (R) - Routed MAC, O - Overlay MAC
+        age - seconds since last seen,+ - primary entry using vPC Peer-Link,
+        (T) - True, (F) - False, C - ControlPlane MAC, ~ - vsan
+   VLAN     MAC Address      Type      age     Secure NTFY Ports
+---------+-----------------+--------+---------+------+----+------------------
+C   10     5254.0001.7f6d   dynamic  0         F      F    nve1(10.1.1.1)
+*   10     5254.001f.7bd8   dynamic  0         F      F    Eth1/3
+LEAF2#  show nve vni 1000
+Codes: CP - Control Plane        DP - Data Plane          
+       UC - Unconfigured         SA - Suppress ARP        
+       SU - Suppress Unknown Unicast 
+       Xconn - Crossconnect      
+       MS-IR - Multisite Ingress Replication
+ 
+Interface VNI      Multicast-group   State Mode Type [BD/VRF]      Flags
+--------- -------- ----------------- ----- ---- ------------------ -----
+nve1      1000     UnicastBGP        Up    CP   L2 [10]            SA   
+
+LEAF2#  show ip bgp all summ
+BGP summary information for VRF default, address family IPv4 Unicast
+BGP router identifier 10.255.255.2, local AS number 65001
+BGP table version is 31, IPv4 Unicast config peers 2, capable peers 2
+8 network entries and 14 paths using 2672 bytes of memory
+BGP attribute entries [4/688], BGP AS path entries [3/30]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.4    4 65000      60      53       31    0    0 00:45:46 6         
+10.255.255.5    4 65000      52      45       31    0    0 00:19:17 6         
+
+BGP summary information for VRF default, address family IPv6 Unicast
+
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 10.255.255.2, local AS number 65001
+BGP table version is 22, L2VPN EVPN config peers 2, capable peers 2
+9 network entries and 12 paths using 2196 bytes of memory
+BGP attribute entries [5/860], BGP AS path entries [1/10]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.255.255.4    4 65000      60      53       22    0    0 00:45:46 3         
+10.255.255.5    4 65000      52      45       22    0    0 00:19:17 3         
+LEAF2# 
+
+LEAF2#  show bgp l2vpn evpn 192.168.1.4
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.2:32777    (L2VNI 1000)
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]
+/248, version 10
+Paths: (1 available, best #1)
+Flags: (0x000102) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop
+  AS-Path: NONE, path locally originated
+    10.1.1.2 (metric 0) from 0.0.0.0 (10.255.255.2)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 advertised to peers:
+    10.255.255.4       10.255.255.5   
+
+LEAF2#  show bgp l2vpn evpn 192.168.1.2
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]
+/248, version 19
+Paths: (2 available, best #2)
+Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not i
+n HW
+
+  Path type: external, path is valid, not best reason: newer EBGP path, no label
+ed nexthop
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.5 (10.255.255.5)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported to 1 destination(s)
+             Imported paths list: L2-1000
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 advertised to peers:
+    10.255.255.5   
+
+Route Distinguisher: 10.255.255.2:32777    (L2VNI 1000)
+BGP routing table entry for [2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]
+/248, version 22
+Paths: (1 available, best #1)
+Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop, in rib
+             Imported from 10.255.255.1:32777:[2]:[0]:[0]:[48]:[5254.0001.7f6d]:
+[32]:[192.168.1.2]/248 
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 1000
+      Extcommunity: RT:65001:1000 ENCAP:8
+
+  Path-id 1 not advertised to any peer
+
+LEAF2# 
+
+LEAF2#  show bgp l2vpn evpn 10.1.1.1
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.1:32777
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.1]/88, version 17
+Paths: (2 available, best #2)
+Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not i
+n HW
+
+  Path type: external, path is valid, not best reason: newer EBGP path, no label
+ed nexthop
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.5 (10.255.255.5)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.1
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported to 1 destination(s)
+             Imported paths list: L2-1000
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.1
+
+  Path-id 1 advertised to peers:
+    10.255.255.5   
+
+Route Distinguisher: 10.255.255.2:32777    (L2VNI 1000)
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.1]/88, version 20
+Paths: (1 available, best #1)
+Flags: (0x000012) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
+
+  Advertised path-id 1
+  Path type: external, path is valid, is best path, no labeled nexthop
+             Imported from 10.255.255.1:32777:[3]:[0]:[32]:[10.1.1.1]/88 
+  AS-Path: 65000 65001 , path sourced external to AS
+    10.1.1.1 (metric 41) from 10.255.255.4 (10.255.255.4)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+
+...skipping 1 line
+
+  Path-id 1 not advertised to any peer
+
+LEAF2# show bgp l2vpn evpn 10.1.1.2
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 10.255.255.2:32777    (L2VNI 1000)
+BGP routing table entry for [3]:[0]:[32]:[10.1.1.2]/88, version 3
+Paths: (1 available, best #1)
+Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop
+  AS-Path: NONE, path locally originated
+    10.1.1.2 (metric 0) from 0.0.0.0 (10.255.255.2)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Extcommunity: RT:65001:1000 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 1000, Tunnel Id: 10.1.1.2
+
+  Path-id 1 advertised to peers:
+    10.255.255.4       10.255.255.5   
+
+LEAF2# 
+
+LEAF2# show l2route evpn mac-ip all
+Flags -(Rmac):Router MAC (Stt):Static (L):Local (R):Remote (V):vPC link 
+(Dup):Duplicate (Spl):Split (Rcv):Recv(D):Del Pending (S):Stale (C):Clear
+(Ps):Peer Sync (Ro):Re-Originated (Orp):Orphan 
+Topology    Mac Address    Host IP                                 Prod   Flags 
+        Seq No     Next-Hops                              
+----------- -------------- --------------------------------------- ------ ------
+---- ---------- ---------------------------------------
+10          5254.0001.7f6d 192.168.1.2                             BGP    --    
+        0         10.1.1.1 (Label: 1000)                 
+10          5254.001f.7bd8 192.168.1.4                             ARP    L,    
+        0         Eth1/3                                 
+LEAF2# 
+
+
+
+LEAF2# show ip bgp all
+BGP routing table information for VRF default, address family IPv4 Unicast
+BGP table version is 31, Local Router ID is 10.255.255.2
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+*|e10.1.1.1/32        10.255.255.5                                   0 65000 650
+01 ?
+*>e                   10.255.255.4                                   0 65000 650
+01 ?
+*>r10.1.1.2/32        0.0.0.0                  0        100      32768 ?
+* e10.1.1.4/32        10.255.255.5                                   0 65000 650
+01 65000 ?
+*>e                   10.255.255.4             0                     0 65000 ?
+*>e10.1.1.5/32        10.255.255.5             0                     0 65000 ?
+* e                   10.255.255.4                                   0 65000 650
+01 65000 ?
+*|e10.255.255.1/32    10.255.255.5                                   0 65000 650
+01 ?
+*>e                   10.255.255.4                                   0 65000 650
+01 ?
+*>r10.255.255.2/32    0.0.0.0                  0        100      32768 ?
+* e10.255.255.4/32    10.255.255.5                                   0 65000 650
+01 65000 ?
+*>e                   10.255.255.4             0                     0 65000 ?
+*>e10.255.255.5/32    10.255.255.5             0                     0 65000 ?
+* e                   10.255.255.4                                   0 65000 650
+01 65000 ?
+
+BGP routing table information for VRF default, address family L2VPN EVPN
+BGP table version is 22, Local Router ID is 10.255.255.2
+Status: s-suppressed, x-deleted, S-stale, d-dampened, h-history, *-valid, >-best
+Path type: i-internal, e-external, c-confed, l-local, a-aggregate, r-redist, I-i
+njected
+Origin codes: i - IGP, e - EGP, ? - incomplete, | - multipath, & - backup, 2 - b
+est2
+
+   Network            Next Hop            Metric     LocPrf     Weight Path
+Route Distinguisher: 10.255.255.1:32777
+* e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[0]:[0.0.0.0]/216
+                      10.1.1.1                                       0 65000 650
+01 i
+*>e                   10.1.1.1                                       0 65000 650
+01 i
+* e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]/248
+                      10.1.1.1                                       0 65000 650
+01 i
+*>e                   10.1.1.1                                       0 65000 650
+01 i
+* e[3]:[0]:[32]:[10.1.1.1]/88
+                      10.1.1.1                                       0 65000 650
+01 i
+*>e                   10.1.1.1                                       0 65000 650
+01 i
+
+Route Distinguisher: 10.255.255.2:32777    (L2VNI 1000)
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[0]:[0.0.0.0]/216
+                      10.1.1.1                                       0 65000 650
+01 i
+*>l[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[0]:[0.0.0.0]/216
+                      10.1.1.2                          100      32768 i
+*>e[2]:[0]:[0]:[48]:[5254.0001.7f6d]:[32]:[192.168.1.2]/248
+                      10.1.1.1                                       0 65000 650
+01 i
+*>l[2]:[0]:[0]:[48]:[5254.001f.7bd8]:[32]:[192.168.1.4]/248
+                      10.1.1.2                          100      32768 i
+*>e[3]:[0]:[32]:[10.1.1.1]/88
+                      10.1.1.1                                       0 65000 650
+01 i
+*>l[3]:[0]:[32]:[10.1.1.2]/88
+                      10.1.1.2                          100      32768 i
+
+LEAF2# show nve internal vni all
+
+VNI        Ready-state  Reason                                 Multisite   
+---------- ------------ -------------------------------------  ------------
+1000       Ready        [L2-vni-rep-mode-ready              ]  No         
+
+LEAF2# 
